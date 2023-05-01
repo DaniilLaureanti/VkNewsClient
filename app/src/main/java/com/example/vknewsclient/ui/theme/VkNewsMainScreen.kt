@@ -1,45 +1,45 @@
 package com.example.vknewsclient.ui.theme
 
-import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.example.vknewsclient.MainViewModel
+import com.example.vknewsclient.domain.FeedPost
 import com.example.vknewsclient.navigation.AppNavGraph
-import com.example.vknewsclient.navigation.NavigationState
-import com.example.vknewsclient.navigation.Screen
 import com.example.vknewsclient.navigation.rememberNavigationState
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen() {
     val navigationState = rememberNavigationState()
+
+    val commentsToPost: MutableState<FeedPost?> = remember {
+        mutableStateOf(null)
+    }
 
     Scaffold(
         bottomBar = {
             BottomNavigation {
                 val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
+                val currentRout = navBackStackEntry?.destination?.route
+
                 val items = listOf(
                     NavigationItem.Home,
                     NavigationItem.Favourite,
                     NavigationItem.Profile
                 )
-                items.forEach() {
+                items.forEach { item ->
                     BottomNavigationItem(
-                        selected = currentRoute == it.screen.route,
-                        onClick = {
-                            navigationState.navigateTo(it.screen.route)
-                        },
+                        selected = currentRout == item.screen.route,
+                        onClick = { navigationState.navigateTo(item.screen.route) },
                         icon = {
-                            Icon(it.icon, contentDescription = null)
+                            Icon(item.icon, contentDescription = null)
                         },
                         label = {
-                            Text(text = stringResource(id = it.titleResId))
+                            Text(text = stringResource(id = item.titleResId))
                         },
                         selectedContentColor = MaterialTheme.colors.onPrimary,
                         unselectedContentColor = MaterialTheme.colors.onSecondary
@@ -48,21 +48,38 @@ fun MainScreen(viewModel: MainViewModel) {
             }
         }
     ) { paddingValues ->
-
         AppNavGraph(
+
             navHostController = navigationState.navHostController,
             homeScreenContent = {
-                HomeScreen(
-                    viewModel = viewModel,
-                    paddingValues = paddingValues
-                )
+                if (commentsToPost.value == null) {
+                    HomeScreen(
+                        paddingValues = paddingValues,
+                        onCommentsClickListener = {
+                            commentsToPost.value = it
+                        }
+                    )
+                } else{
+                    CommentsScreen {
+                        commentsToPost.value = null
+                    }
+                }
             },
-            favouriteScreenContent = {
-                Text("Favourite", color = MaterialTheme.colors.onPrimary)
-            },
-            profileScreenContent = {
-                Text("Profile", color = MaterialTheme.colors.onPrimary)
-            }
+            favouriteScreenContent = { TextCounter(name = "Favourite") },
+            profileScreenContent = { TextCounter(name = "Profile") }
         )
     }
+}
+
+@Composable
+private fun TextCounter(name: String) {
+    var count by rememberSaveable {
+        mutableStateOf(0)
+    }
+
+    Text(
+        modifier = Modifier.clickable { count++ },
+        text = "$name Count: $count",
+        color = Color.Black
+    )
 }
