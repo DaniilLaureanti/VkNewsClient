@@ -67,7 +67,7 @@ fun PostCard(
                 onCommentClickListener = onCommentClickListener,
                 onShareClickListener = onShareClickListener,
                 onViewsClickListener = onViewsClickListener,
-                isFavourite = feedPost.isFavourite
+                isFavourite = feedPost.isLiked
             )
         }
     }
@@ -155,7 +155,7 @@ private fun Statistics(
             val likesItem = statistics.getItemByType(StatisticType.LIKES)
             IconWithText(
                 iconResId = if (isFavourite) R.drawable.ic_like_set else R.drawable.ic_like,
-                text = formatStatisticCount (likesItem.count),
+                text = formatStatisticCount(likesItem.count),
                 onItemClickListener = {
                     onLikeClickListener(likesItem)
                 },
