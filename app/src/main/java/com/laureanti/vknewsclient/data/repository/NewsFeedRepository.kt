@@ -4,6 +4,7 @@ import android.app.Application
 import com.laureanti.vknewsclient.data.mapper.NewsFeedMapper
 import com.laureanti.vknewsclient.data.network.ApiFactory
 import com.laureanti.vknewsclient.domain.FeedPost
+import com.laureanti.vknewsclient.domain.PostComment
 import com.laureanti.vknewsclient.domain.StatisticItem
 import com.laureanti.vknewsclient.domain.StatisticType
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
@@ -43,13 +44,22 @@ class NewsFeedRepository(application: Application) {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
-    suspend fun deletePost(feedPost: FeedPost){
+    suspend fun deletePost(feedPost: FeedPost) {
         apiService.ignorePost(
             token = getAccessToken(),
             ownerId = feedPost.communityId,
             postId = feedPost.id
         )
         _feedPosts.remove(feedPost)
+    }
+
+    suspend fun getComments(feedPost: FeedPost): List<PostComment> {
+        val comments = apiService.getComments(
+            token = getAccessToken(),
+            ownerId = feedPost.communityId,
+            postId = feedPost.id
+        )
+        return mapper.mapResponseToComments(comments)
     }
 
     suspend fun changeLikeStatus(feedPost: FeedPost) {
