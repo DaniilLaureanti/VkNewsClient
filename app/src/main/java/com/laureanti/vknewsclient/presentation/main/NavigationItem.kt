@@ -21,7 +21,7 @@ sealed class NavigationItem(
 
     object Favourite : NavigationItem(
         screen = Screen.Favourite,
-        R.string.navigation_item_favorite,
+        R.string.navigation_item_favourite,
         Icons.Outlined.Favorite
     )
 
