@@ -1,31 +1,23 @@
 package com.laureanti.vknewsclient.presentation.comments
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.app.Application
 import androidx.lifecycle.ViewModel
+import com.laureanti.vknewsclient.data.repository.NewsFeedRepository
 import com.laureanti.vknewsclient.domain.FeedPost
-import com.laureanti.vknewsclient.domain.PostComment
+import kotlinx.coroutines.flow.map
 
 class CommentsViewModel(
-    feedPost: FeedPost
+    feedPost: FeedPost,
+    application: Application
 ) : ViewModel() {
 
-    private val _screenState = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
-    val screenState: LiveData<CommentsScreenState> = _screenState
+    private val repository = NewsFeedRepository(application)
 
-    init {
-        loadComments(feedPost)
-    }
-
-    private fun loadComments(feedPost: FeedPost) {
-        val comments = mutableListOf<PostComment>().apply {
-            repeat(10) {
-                add(PostComment(id = it))
-            }
+    val screenState = repository.getComments(feedPost)
+        .map {
+            CommentsScreenState.Comments(
+                feedPost = feedPost,
+                comments = it
+            )
         }
-        _screenState.value = CommentsScreenState.Comments(
-            feedPost = feedPost,
-            comments = comments
-        )
-    }
 }
