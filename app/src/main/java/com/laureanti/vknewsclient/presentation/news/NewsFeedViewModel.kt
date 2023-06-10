@@ -1,6 +1,7 @@
 package com.laureanti.vknewsclient.presentation.news
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,6 +10,7 @@ import com.laureanti.vknewsclient.data.repository.NewsFeedRepository
 import com.laureanti.vknewsclient.domain.FeedPost
 import com.laureanti.vknewsclient.domain.StatisticItem
 import com.laureanti.vknewsclient.extentions.mergeWith
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -20,6 +22,9 @@ import kotlinx.coroutines.launch
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val exceptionHandler = CoroutineExceptionHandler{_, _ ->
+        Log.d("NewsFeedViewModel", "ExceptionHandler")
+    }
     private val repository = NewsFeedRepository(application)
 
     private val recommendationsFlow = repository.recommendations
@@ -45,13 +50,13 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun changeLikeStatus(feedPost: FeedPost) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             repository.changeLikeStatus(feedPost)
         }
     }
 
     fun remove(feedPost: FeedPost) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             repository.deletePost(feedPost)
         }
     }
