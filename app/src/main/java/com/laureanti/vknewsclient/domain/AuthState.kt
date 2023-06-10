@@ -1,4 +1,4 @@
-package com.laureanti.vknewsclient.presentation.main
+package com.laureanti.vknewsclient.domain
 
 sealed class AuthState{
 
