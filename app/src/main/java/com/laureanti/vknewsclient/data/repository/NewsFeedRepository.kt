@@ -4,11 +4,11 @@ import android.app.Application
 import com.laureanti.vknewsclient.data.mapper.NewsFeedMapper
 import com.laureanti.vknewsclient.data.network.ApiFactory
 import com.laureanti.vknewsclient.domain.FeedPost
-import com.laureanti.vknewsclient.domain.NewsFeedResult
 import com.laureanti.vknewsclient.domain.PostComment
 import com.laureanti.vknewsclient.domain.StatisticItem
 import com.laureanti.vknewsclient.domain.StatisticType
 import com.laureanti.vknewsclient.extentions.mergeWith
+import com.laureanti.vknewsclient.domain.AuthState
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -18,16 +18,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 
 class NewsFeedRepository(application: Application) {
 
     private val storage = VKPreferencesKeyValueStorage(application)
-    private val token = VKAccessToken.restore(storage)
+    private val token
+        get() = VKAccessToken.restore(storage)
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
@@ -72,6 +71,8 @@ class NewsFeedRepository(application: Application) {
 
     private var nextFrom: String? = null
 
+    private val checkAuthStateEvents = MutableSharedFlow<Unit>(replay = 1)
+
     val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
         .mergeWith(refreshedListFlow)
         .stateIn(
@@ -80,8 +81,27 @@ class NewsFeedRepository(application: Application) {
             initialValue = feedPosts
         )
 
+    val authStateFlow = flow {
+        checkAuthStateEvents.emit(Unit)
+        checkAuthStateEvents.collect{
+            val currentToken = token
+            val loggedIn = currentToken != null && currentToken.isValid
+            val authState = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
+            emit(authState)
+        }
+
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = AuthState.Initial
+    )
+
     suspend fun loadNextData() {
         nextDataNeededEvents.emit(Unit)
+    }
+
+    suspend fun checkAuthState(){
+        checkAuthStateEvents.emit(Unit)
     }
 
     private fun getAccessToken(): String {
