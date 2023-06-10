@@ -46,7 +46,7 @@ class NewsFeedRepository(application: Application) {
 
     suspend fun deletePost(feedPost: FeedPost) {
         apiService.ignorePost(
-            token = getAccessToken(),
+            accessToken = getAccessToken(),
             ownerId = feedPost.communityId,
             postId = feedPost.id
         )
@@ -55,7 +55,7 @@ class NewsFeedRepository(application: Application) {
 
     suspend fun getComments(feedPost: FeedPost): List<PostComment> {
         val comments = apiService.getComments(
-            token = getAccessToken(),
+            accessToken = getAccessToken(),
             ownerId = feedPost.communityId,
             postId = feedPost.id
         )

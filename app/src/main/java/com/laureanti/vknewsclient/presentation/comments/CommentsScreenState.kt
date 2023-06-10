@@ -5,7 +5,7 @@ import com.laureanti.vknewsclient.domain.PostComment
 
 sealed class CommentsScreenState {
 
-    object Initial: CommentsScreenState()
+    object Initial : CommentsScreenState()
 
     data class Comments(
         val feedPost: FeedPost,

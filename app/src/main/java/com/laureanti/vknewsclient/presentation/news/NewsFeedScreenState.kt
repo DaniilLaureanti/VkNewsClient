@@ -12,6 +12,4 @@ sealed class NewsFeedScreenState {
         val posts: List<FeedPost>,
         val nextDataIsLoading: Boolean = false
     ) : NewsFeedScreenState()
-
-
 }

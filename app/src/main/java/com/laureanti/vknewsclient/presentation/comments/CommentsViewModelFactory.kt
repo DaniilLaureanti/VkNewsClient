@@ -9,7 +9,8 @@ class CommentsViewModelFactory(
     private val feedPost: FeedPost,
     private val application: Application
 ) : ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CommentsViewModel(application, feedPost) as T
+        return CommentsViewModel(feedPost, application) as T
     }
 }

@@ -37,10 +37,10 @@ fun MainScreen() {
                     BottomNavigationItem(
                         selected = selected,
                         onClick = {
-                            if(!selected) {
+                            if (!selected) {
                                 navigationState.navigateTo(item.screen.route)
                             }
-                                  },
+                        },
                         icon = {
                             Icon(item.icon, contentDescription = null)
                         },
@@ -64,7 +64,7 @@ fun MainScreen() {
                     }
                 )
             },
-            commentsScreenContent = {feedPost ->
+            commentsScreenContent = { feedPost ->
                 CommentsScreen(
                     onBackPressed = {
                         navigationState.navHostController.popBackStack()
