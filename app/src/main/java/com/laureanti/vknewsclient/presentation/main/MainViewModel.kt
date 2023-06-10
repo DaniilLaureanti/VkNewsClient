@@ -27,7 +27,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _authState.value = AuthState.Authorized
         } else {
             _authState.value = AuthState.NotAuthorized
-            throw RuntimeException("Exception: ${(result as VKAuthenticationResult.Failed).exception}")
         }
     }
 }

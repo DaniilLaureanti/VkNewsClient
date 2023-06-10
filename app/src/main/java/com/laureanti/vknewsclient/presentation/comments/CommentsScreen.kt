@@ -104,7 +104,8 @@ private fun CommentItem(
         AsyncImage(
             modifier = Modifier
                 .size(48.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+            ,
             model = comment.authorAvatarUrl,
             contentDescription = null
         )

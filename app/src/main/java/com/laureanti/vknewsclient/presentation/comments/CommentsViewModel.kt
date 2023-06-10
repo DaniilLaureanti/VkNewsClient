@@ -12,9 +12,9 @@ import com.laureanti.vknewsclient.domain.PostComment
 import kotlinx.coroutines.launch
 
 class CommentsViewModel(
-    application: Application,
-    feedPost: FeedPost
-) : AndroidViewModel(application) {
+    feedPost: FeedPost,
+    application: Application
+) : ViewModel() {
 
     private val repository = NewsFeedRepository(application)
 
