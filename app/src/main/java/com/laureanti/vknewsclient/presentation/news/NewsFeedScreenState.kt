@@ -1,6 +1,6 @@
 package com.laureanti.vknewsclient.presentation.news
 
-import com.laureanti.vknewsclient.domain.FeedPost
+import com.laureanti.vknewsclient.domain.entity.FeedPost
 
 sealed class NewsFeedScreenState {
 

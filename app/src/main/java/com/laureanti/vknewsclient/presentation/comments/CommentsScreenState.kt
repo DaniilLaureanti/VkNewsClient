@@ -1,7 +1,7 @@
 package com.laureanti.vknewsclient.presentation.comments
 
-import com.laureanti.vknewsclient.domain.FeedPost
-import com.laureanti.vknewsclient.domain.PostComment
+import com.laureanti.vknewsclient.domain.entity.FeedPost
+import com.laureanti.vknewsclient.domain.entity.PostComment
 
 sealed class CommentsScreenState {
 
