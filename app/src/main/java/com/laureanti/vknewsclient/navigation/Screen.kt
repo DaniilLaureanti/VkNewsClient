@@ -1,7 +1,7 @@
 package com.laureanti.vknewsclient.navigation
 
 import android.net.Uri
-import com.laureanti.vknewsclient.domain.FeedPost
+import com.laureanti.vknewsclient.domain.entity.FeedPost
 import com.google.gson.Gson
 
 sealed class Screen(
